@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Post,
   ServiceUnavailableException,
 } from '@nestjs/common';
@@ -21,6 +22,13 @@ export class WorkhoursController {
   @Post()
   async handleStatus(@Body() payload: Workhour) {
     try {
+      const workhours = this.service.getAll();
+      const exists = workhours.find(
+        (item) => item.hour === payload.hour && item.time === payload.time,
+      );
+      if (!exists)
+        throw new NotFoundException('No se ha encontrado ese horario');
+
       const isEnabled = await this.service.isEnabled(payload);
       if (isEnabled) return await this.service.disable(isEnabled.id);
 
