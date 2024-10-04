@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Post,
   ServiceUnavailableException,
+  Version,
 } from '@nestjs/common';
 
 import { WorkhoursService } from './workhours.service';
@@ -14,11 +15,13 @@ import { Workhour } from '@prisma/client';
 export class WorkhoursController {
   constructor(private readonly service: WorkhoursService) {}
 
+  @Version('1')
   @Get()
   getAll() {
     return this.service.getAll();
   }
 
+  @Version('1')
   @Post()
   async handleStatus(@Body() payload: Workhour) {
     try {
@@ -43,6 +46,7 @@ export class WorkhoursController {
     }
   }
 
+  @Version('1')
   @Get('enabled')
   async getAllEnabled() {
     try {
