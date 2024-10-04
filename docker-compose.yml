@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  database:
+    image: postgres:17
+    container_name: lavecar-db
+    ports:
+      - '9876:6543'
+      - '8765:5432'
+    env_file:
+      - .env
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+volumes:
+  database-data:

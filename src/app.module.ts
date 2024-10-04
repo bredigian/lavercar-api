@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { WorkhoursModule } from './workhours/workhours.module';
 
 @Module({
-  imports: [],
+  imports: [WorkhoursModule],
   controllers: [],
   providers: [],
 })
