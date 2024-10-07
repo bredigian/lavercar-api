@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { WorkhoursModule } from './workhours/workhours.module';
 import { ReservesModule } from './reserves/reserves.module';
+import { WeekdaysModule } from './weekdays/weekdays.module';
+import { WorkhoursModule } from './workhours/workhours.module';
 
 @Module({
-  imports: [WorkhoursModule, ReservesModule],
+  imports: [WorkhoursModule, ReservesModule, WeekdaysModule],
   controllers: [],
   providers: [],
 })

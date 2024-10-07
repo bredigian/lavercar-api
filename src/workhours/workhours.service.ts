@@ -26,6 +26,11 @@ const WORKHOURS: TWorkhour[] = [
   '20:30',
 ];
 
+type TWeekdayWithWorkhours = {
+  weekday: number;
+  workhours: Partial<Workhour>[];
+};
+
 @Injectable()
 export class WorkhoursService {
   constructor(private prisma: PrismaService) {}
@@ -44,7 +49,22 @@ export class WorkhoursService {
   }
 
   async getAllEnabled() {
-    return await this.prisma.workhour.findMany();
+    const enabledWorkhours = await this.prisma.workhour.findMany();
+    const groupedByWeekday: TWeekdayWithWorkhours[] = enabledWorkhours.reduce(
+      (acc: TWeekdayWithWorkhours[], curr: Workhour) => {
+        let day = acc.find((d) => d.weekday === curr.weekday);
+        if (!day) {
+          day = { weekday: curr.weekday, workhours: [] };
+          acc.push(day);
+        }
+        day.workhours.push({ id: curr.id, hour: curr.hour, time: curr.time });
+
+        return acc;
+      },
+      [],
+    );
+
+    return groupedByWeekday.sort((a, b) => a.weekday - b.weekday);
   }
 
   async isEnabled(payload: Workhour) {

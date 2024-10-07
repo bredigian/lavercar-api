@@ -23,29 +23,29 @@ enum PAYMENT_STATUS {
   PENDING
   APPROVED
   REJECTED
-  CANCELLED 
+  CANCELLED
 }
 
 model Reserve {
-  id Int @id  @unique @default(autoincrement())
-  date DateTime
-  user_name String
-  user_email String
-  user_phone String
-  status RESERVE_STATUS
+  id             String         @id @unique @default(uuid())
+  date           DateTime       @unique
+  user_name      String
+  user_email     String
+  user_phone     String
+  status         RESERVE_STATUS
   payment_status PAYMENT_STATUS
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
 }
 
 model Workhour {
-  id String @id @unique @default(uuid())
-  hour Int
-  time Int
+  id      String @id @unique @default(uuid())
+  hour    Int
+  time    Int
   weekday Int
 }
 
 model Log {
-  id String @id @unique @default(uuid())
+  id          String @id @unique @default(uuid())
   description String
 }

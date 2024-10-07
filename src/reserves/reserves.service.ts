@@ -6,11 +6,21 @@ import { Reserve } from '@prisma/client';
 export class ReservesService {
   constructor(private prisma: PrismaService) {}
 
+  async getAllFromNow() {
+    return await this.prisma.reserve.findMany({
+      where: { date: { gte: new Date() } },
+    });
+  }
+
   async create(payload: Reserve) {
     return await this.prisma.reserve.create({ data: payload });
   }
 
   async isReserved(date: Date) {
-    return await this.prisma.reserve.findMany({ where: { date } });
+    return await this.prisma.reserve.findUnique({ where: { date } });
+  }
+
+  async getDetail(id: Reserve['id']) {
+    return await this.prisma.reserve.findUnique({ where: { id } });
   }
 }
