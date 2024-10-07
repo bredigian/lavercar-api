@@ -64,6 +64,13 @@ export class WorkhoursService {
       [],
     );
 
+    groupedByWeekday.forEach((item) => {
+      item.workhours.sort((a, b) => {
+        if (a.hour === b.hour) return a.time - b.time;
+        return a.hour - b.hour;
+      });
+    });
+
     return groupedByWeekday.sort((a, b) => a.weekday - b.weekday);
   }
 
