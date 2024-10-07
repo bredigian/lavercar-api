@@ -23,4 +23,10 @@ export class ReservesService {
   async getDetail(id: Reserve['id']) {
     return await this.prisma.reserve.findUnique({ where: { id } });
   }
+
+  async getNumberOfReserve(date: Reserve['date']) {
+    return await this.prisma.reserve.count({
+      where: { created_at: { lte: new Date(date) } },
+    });
+  }
 }

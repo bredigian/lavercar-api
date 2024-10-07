@@ -3,6 +3,7 @@ import {
   ConflictException,
   Controller,
   Get,
+  NotFoundException,
   // NotFoundException,
   Post,
   Query,
@@ -46,7 +47,12 @@ export class ReservesController {
       const isReserved = await this.service.isReserved(date);
       if (isReserved) throw new ConflictException('El turno ya fue asignado.');
 
-      return await this.service.create(payload);
+      const reserved = await this.service.create(payload);
+      const numberOfReserve = await this.service.getNumberOfReserve(
+        new Date(reserved.date),
+      );
+
+      return { ...reserved, numberOfReserve };
     } catch (e) {
       if (e) {
         console.error(e);
@@ -64,7 +70,14 @@ export class ReservesController {
   async getDetail(@Query() params: { id: Reserve['id'] }) {
     try {
       const { id } = params;
-      return this.service.getDetail(id);
+      const detail = await this.service.getDetail(id);
+      if (!detail) throw new NotFoundException('No se encontró la reserva.');
+
+      const numberOfReserve = await this.service.getNumberOfReserve(
+        new Date(detail.date),
+      );
+
+      return { ...detail, reserve_number: numberOfReserve };
     } catch (e) {
       if (e) {
         console.error(e);
