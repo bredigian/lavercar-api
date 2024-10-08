@@ -25,6 +25,23 @@ export class ReservesController {
   ) {}
 
   @Version('1')
+  @Get()
+  async getAllFromNow() {
+    try {
+      return await this.service.getAllFromNow();
+    } catch (e) {
+      if (e) {
+        console.error(e);
+        throw e;
+      }
+
+      throw new ServiceUnavailableException(
+        'No se ha podido establecer la conexión con la base de datos.',
+      );
+    }
+  }
+
+  @Version('1')
   @Post()
   async create(@Body() payload: Reserve) {
     try {
@@ -47,12 +64,7 @@ export class ReservesController {
       const isReserved = await this.service.isReserved(date);
       if (isReserved) throw new ConflictException('El turno ya fue asignado.');
 
-      const reserved = await this.service.create(payload);
-      const numberOfReserve = await this.service.getNumberOfReserve(
-        new Date(reserved.date),
-      );
-
-      return { ...reserved, numberOfReserve };
+      return await this.service.create(payload);
     } catch (e) {
       if (e) {
         console.error(e);
@@ -67,17 +79,15 @@ export class ReservesController {
 
   @Version('1')
   @Get('detail')
-  async getDetail(@Query() params: { id: Reserve['id'] }) {
+  async getDetail(
+    @Query() params: { id: Reserve['id']; number: Reserve['number'] },
+  ) {
     try {
-      const { id } = params;
-      const detail = await this.service.getDetail(id);
+      const { id, number } = params;
+      const detail = await this.service.getDetail(id ?? Number(number));
       if (!detail) throw new NotFoundException('No se encontró la reserva.');
 
-      const numberOfReserve = await this.service.getNumberOfReserve(
-        new Date(detail.date),
-      );
-
-      return { ...detail, reserve_number: numberOfReserve };
+      return detail;
     } catch (e) {
       if (e) {
         console.error(e);
