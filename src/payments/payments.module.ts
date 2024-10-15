@@ -1,17 +1,17 @@
 import { MercadopagoService } from 'src/mercadopago/mercadopago.service';
 import { Module } from '@nestjs/common';
-import { PaymentsService } from 'src/payments/payments.service';
+import { PaymentsController } from './payments.controller';
+import { PaymentsService } from './payments.service';
 import { PrismaService } from 'src/services/prisma.service';
-import { ReservesController } from './reserves.controller';
-import { ReservesService } from './reserves.service';
+import { ReservesService } from 'src/reserves/reserves.service';
 
 @Module({
-  controllers: [ReservesController],
   providers: [
-    ReservesService,
     PaymentsService,
+    ReservesService,
     MercadopagoService,
     PrismaService,
   ],
+  controllers: [PaymentsController],
 })
-export class ReservesModule {}
+export class PaymentsModule {}

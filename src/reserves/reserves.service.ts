@@ -29,9 +29,14 @@ export class ReservesService {
     });
   }
 
-  async getNumberOfReserve(date: Reserve['date']) {
-    return await this.prisma.reserve.count({
-      where: { created_at: { lte: new Date(date) } },
+  async handlePaymentStatus(
+    id: Reserve['id'],
+    payment_id: Reserve['payment_id'],
+    payment_status: Reserve['payment_status'],
+  ) {
+    return await this.prisma.reserve.update({
+      where: { id },
+      data: { payment_id, payment_status },
     });
   }
 }

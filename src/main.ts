@@ -6,6 +6,6 @@ async function bootstrap() {
   app.enableCors();
   app.enableVersioning();
 
-  await app.listen(3001);
+  await app.listen(3001, () => console.log('LaveCAR API running on PORT 3001'));
 }
 bootstrap();

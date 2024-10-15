@@ -4,7 +4,7 @@ import {
   Controller,
   Get,
   NotFoundException,
-  // NotFoundException,
+  Patch,
   Post,
   Query,
   ServiceUnavailableException,
@@ -15,12 +15,14 @@ import {
 
 import { ReservesService } from './reserves.service';
 import { Reserve } from '@prisma/client';
+import { PaymentsService } from 'src/payments/payments.service';
 // import { WorkhoursService } from 'src/workhours/workhours.service';
 
 @Controller('reserves')
 export class ReservesController {
   constructor(
     private readonly service: ReservesService,
+    private readonly paymentsService: PaymentsService,
     // private readonly workhoursService: WorkhoursService,
   ) {}
 
@@ -96,6 +98,28 @@ export class ReservesController {
 
       throw new ServiceUnavailableException(
         'No se ha podido establecer la conexión con la base de datos.',
+      );
+    }
+  }
+
+  @Version('1')
+  @Patch()
+  async updatePaymentStatusById(@Body() payload: Partial<Reserve>) {
+    try {
+      const { id, payment_status, payment_id } = payload;
+      return await this.service.handlePaymentStatus(
+        id,
+        payment_id,
+        payment_status,
+      );
+    } catch (e) {
+      if (e) {
+        console.error(e);
+        throw e;
+      }
+
+      throw new ServiceUnavailableException(
+        'El servicio no se encuentra disponible. Intente mas tarde nuevamente.',
       );
     }
   }

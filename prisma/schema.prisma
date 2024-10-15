@@ -34,6 +34,7 @@ model Reserve {
   user_email     String
   user_phone     String
   status         RESERVE_STATUS
+  payment_id String?
   payment_status PAYMENT_STATUS
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
