@@ -31,7 +31,7 @@ model Reserve {
   number         Int            @default(autoincrement())
   date           DateTime       @unique
   user_name      String
-  user_email     String
+  user_email     String?
   user_phone     String
   status         RESERVE_STATUS
   payment_id String?

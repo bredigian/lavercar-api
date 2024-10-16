@@ -86,9 +86,12 @@ export class ReservesController {
         },
       };
 
-      const { status } = await this.whatsapp.sendTemplateMessage(message);
+      const whatsappResponse = await this.whatsapp.sendTemplateMessage(message);
 
-      return { ...reserved, whatsapp_message_status: status };
+      return {
+        ...reserved,
+        whatsapp_message_status: whatsappResponse?.status ?? 400,
+      };
     } catch (e) {
       if (e) {
         console.error(e);
