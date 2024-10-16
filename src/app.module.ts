@@ -5,6 +5,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { ReservesModule } from './reserves/reserves.module';
 import { WeekdaysModule } from './weekdays/weekdays.module';
 import { WorkhoursModule } from './workhours/workhours.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { WorkhoursModule } from './workhours/workhours.module';
     WeekdaysModule,
     MercadopagoModule,
     PaymentsModule,
+    WhatsappModule,
   ],
   controllers: [],
   providers: [],

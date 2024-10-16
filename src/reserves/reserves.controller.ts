@@ -16,6 +16,9 @@ import {
 import { ReservesService } from './reserves.service';
 import { Reserve } from '@prisma/client';
 import { PaymentsService } from 'src/payments/payments.service';
+import { WhatsappService } from 'src/whatsapp/whatsapp.service';
+import { TWhatsAppTemplateMessage } from 'src/types/whatsapp.types';
+import { DateTime } from 'luxon';
 // import { WorkhoursService } from 'src/workhours/workhours.service';
 
 @Controller('reserves')
@@ -24,6 +27,7 @@ export class ReservesController {
     private readonly service: ReservesService,
     private readonly paymentsService: PaymentsService,
     // private readonly workhoursService: WorkhoursService,
+    private readonly whatsapp: WhatsappService,
   ) {}
 
   @Version('1')
@@ -48,7 +52,9 @@ export class ReservesController {
   async create(@Body() payload: Reserve) {
     try {
       const { date } = payload;
-      // const datetime = DateTime.fromJSDate(date);
+      const datetime = DateTime.fromJSDate(new Date(date))
+        .setLocale('es-AR')
+        .setZone('America/Argentina/Buenos_Aires');
 
       // const hour = datetime.hour;
       // const time = datetime.minute;
@@ -66,7 +72,23 @@ export class ReservesController {
       const isReserved = await this.service.isReserved(date);
       if (isReserved) throw new ConflictException('El turno ya fue asignado.');
 
-      return await this.service.create(payload);
+      const reserved = await this.service.create(payload);
+
+      const RESERVE_NUMBER = reserved.number.toString().padStart(6, '0');
+
+      const message: TWhatsAppTemplateMessage = {
+        to: payload.user_phone,
+        attributes: {
+          user_name: reserved.user_name,
+          date: datetime.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY),
+          time: datetime.toLocaleString(DateTime.TIME_24_SIMPLE) + 'hs',
+          number: RESERVE_NUMBER,
+        },
+      };
+
+      const { status } = await this.whatsapp.sendTemplateMessage(message);
+
+      return { ...reserved, whatsapp_message_status: status };
     } catch (e) {
       if (e) {
         console.error(e);
