@@ -32,9 +32,12 @@ export class ReservesController {
 
   @Version('1')
   @Get()
-  async getAllFromNow() {
+  async getReserves(@Query() query: { date: Date }) {
     try {
-      return await this.service.getAllFromNow();
+      const { date } = query;
+      if (!date) return await this.service.getAllFromNow();
+
+      return await this.service.getAllFromDate(new Date(date));
     } catch (e) {
       if (e) {
         console.error(e);

@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { Reserve } from '@prisma/client';
@@ -9,6 +10,17 @@ export class ReservesService {
   async getAllFromNow() {
     return await this.prisma.reserve.findMany({
       where: { date: { gte: new Date() } },
+    });
+  }
+
+  async getAllFromDate(date: Date) {
+    return await this.prisma.reserve.findMany({
+      where: {
+        date: {
+          gte: date,
+          lt: DateTime.fromJSDate(date).plus({ days: 1 }).toJSDate(),
+        },
+      },
     });
   }
 
