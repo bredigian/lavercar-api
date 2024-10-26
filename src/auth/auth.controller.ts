@@ -3,6 +3,8 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Get,
+  Headers,
   NotFoundException,
   Post,
   ServiceUnavailableException,
@@ -14,7 +16,6 @@ import { TAuth } from 'src/types/auth.types';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SessionsService } from 'src/sessions/sessions.service';
-import { Session } from '@prisma/client';
 import { DateTime } from 'luxon';
 
 @Controller('auth')
@@ -29,7 +30,6 @@ export class AuthController {
   @Post()
   async signin(@Body() payload: TAuth) {
     try {
-      console.log(payload);
       const { username, password } = payload;
       const exists = await this.usersService.findByUsername(username);
       if (!exists) throw new BadRequestException('El usuario no existe.');
@@ -64,7 +64,7 @@ export class AuthController {
       );
 
       return {
-        token_id: session.id,
+        access_token,
         expires_in: session.expire_in,
         userdata: { username, first_name, last_name },
       };
@@ -81,14 +81,15 @@ export class AuthController {
   }
 
   @Version('1')
-  @Post('session')
-  async verifySession(@Body() payload: { token_id: Session['id'] }) {
+  @Get('session')
+  async verifySession(@Headers('Authorization') authorization: string) {
     try {
-      const { token_id } = payload;
-      if (!token_id)
-        throw new UnauthorizedException('El ID del token es requerido.');
+      const access_token = authorization?.substring(7);
+      if (!access_token)
+        throw new UnauthorizedException('El token de acceso es requerido.');
 
-      const session = await this.sessionsService.getSessionById(token_id);
+      const session =
+        await this.sessionsService.getSessionByToken(access_token);
       if (!session)
         throw new NotFoundException('La sesión no existe o ya expiró.');
 
@@ -97,7 +98,7 @@ export class AuthController {
         DateTime.fromJSDate(new Date(expire_in)).toMillis() <
         DateTime.now().toMillis()
       ) {
-        await this.sessionsService.deleteSessionById(token_id);
+        await this.sessionsService.deleteSessionByToken(access_token);
         throw new UnauthorizedException('La sesión ha expirado.');
       }
 
@@ -107,7 +108,7 @@ export class AuthController {
       const { username, first_name, last_name } = user;
 
       return {
-        token_id,
+        access_token: token,
         expires_in: expire_in,
         userdata: { username, first_name, last_name },
       };
