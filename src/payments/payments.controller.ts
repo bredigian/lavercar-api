@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Query,
   ServiceUnavailableException,
@@ -12,7 +13,7 @@ import {
 import { PaymentsService } from './payments.service';
 import { PreferenceRequest } from 'mercadopago/dist/clients/preference/commonTypes';
 import { TPaymentWebhook } from 'src/types/payments.types';
-import { PAYMENT_STATUS } from '@prisma/client';
+import { PAYMENT_STATUS, Reserve } from '@prisma/client';
 import { ReservesService } from 'src/reserves/reserves.service';
 
 @Controller('payments')
@@ -53,6 +54,28 @@ export class PaymentsController {
 
       throw new ServiceUnavailableException(
         'No se ha podido establecer conexión con la base de datos.',
+      );
+    }
+  }
+
+  @Version('1')
+  @Patch()
+  async updatePaymentStatusById(@Body() payload: Partial<Reserve>) {
+    try {
+      const { id, payment_status, payment_id } = payload;
+      return await this.reservesService.handlePaymentStatus(
+        id,
+        payment_id,
+        payment_status,
+      );
+    } catch (e) {
+      if (e) {
+        console.error(e);
+        throw e;
+      }
+
+      throw new ServiceUnavailableException(
+        'El servicio no se encuentra disponible. Intente mas tarde nuevamente.',
       );
     }
   }

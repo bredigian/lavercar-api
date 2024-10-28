@@ -132,14 +132,10 @@ export class ReservesController {
 
   @Version('1')
   @Patch()
-  async updatePaymentStatusById(@Body() payload: Partial<Reserve>) {
+  async updateStatusById(@Body() payload: Partial<Reserve>) {
     try {
-      const { id, payment_status, payment_id } = payload;
-      return await this.service.handlePaymentStatus(
-        id,
-        payment_id,
-        payment_status,
-      );
+      const { id, status } = payload;
+      return await this.service.handleStatus(id, status);
     } catch (e) {
       if (e) {
         console.error(e);

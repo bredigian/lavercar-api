@@ -51,4 +51,11 @@ export class ReservesService {
       data: { payment_id, payment_status },
     });
   }
+
+  async handleStatus(id: Reserve['id'], status: Reserve['status']) {
+    return await this.prisma.reserve.update({
+      where: { id },
+      data: { status },
+    });
+  }
 }
