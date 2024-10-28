@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   Headers,
@@ -112,6 +113,24 @@ export class AuthController {
         expires_in: expire_in,
         userdata: { username, first_name, last_name },
       };
+    } catch (e) {
+      if (e) {
+        console.error(e);
+        throw e;
+      }
+
+      throw new ServiceUnavailableException(
+        'El servicio no está disponible. Intente nuevamente mas tarde.',
+      );
+    }
+  }
+
+  @Version('1')
+  @Delete('session')
+  async signout(@Headers('Authorization') authorization: string) {
+    try {
+      const access_token = authorization.substring(7);
+      return await this.sessionsService.deleteSessionByToken(access_token);
     } catch (e) {
       if (e) {
         console.error(e);
