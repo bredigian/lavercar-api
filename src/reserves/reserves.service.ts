@@ -15,11 +15,13 @@ export class ReservesService {
   }
 
   async getAllFromDate(date: Date) {
+    const today = DateTime.fromJSDate(date).set({ hour: 0, minute: 0 });
+
     return await this.prisma.reserve.findMany({
       where: {
         date: {
-          gte: date,
-          lt: DateTime.fromJSDate(date).plus({ days: 1 }).toJSDate(),
+          gte: today.toJSDate(),
+          lt: today.plus({ days: 1 }).toJSDate(),
         },
       },
     });
