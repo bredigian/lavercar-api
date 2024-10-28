@@ -10,6 +10,7 @@ export class ReservesService {
   async getAllFromNow() {
     return await this.prisma.reserve.findMany({
       where: { date: { gte: new Date() } },
+      orderBy: { date: 'asc' },
     });
   }
 
