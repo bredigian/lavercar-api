@@ -9,7 +9,9 @@ export class ReservesService {
 
   async getAllFromNow() {
     return await this.prisma.reserve.findMany({
-      where: { date: { gte: new Date() } },
+      where: {
+        date: { gte: DateTime.now().set({ hour: 0, minute: 0 }).toJSDate() },
+      },
       orderBy: { date: 'asc' },
     });
   }
