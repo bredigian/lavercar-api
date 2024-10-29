@@ -1,6 +1,8 @@
 import {
   Body,
+  ConflictException,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Post,
@@ -23,7 +25,7 @@ export class WorkhoursController {
 
   @Version('1')
   @Post()
-  async handleStatus(@Body() payload: Workhour) {
+  async enable(@Body() payload: Workhour) {
     try {
       const workhours = this.service.getAll();
       const exists = workhours.find(
@@ -33,9 +35,34 @@ export class WorkhoursController {
         throw new NotFoundException('No se ha encontrado ese horario');
 
       const isEnabled = await this.service.isEnabled(payload);
-      if (isEnabled) return await this.service.disable(isEnabled.id);
+      if (isEnabled)
+        throw new ConflictException(
+          'El horario de trabajo ya está habilitado.',
+        );
 
       return await this.service.enable(payload);
+    } catch (e) {
+      console.error(e);
+      if (e) throw e;
+
+      throw new ServiceUnavailableException(
+        'No se pudo establecer la conexión con la base de datos.',
+      );
+    }
+  }
+
+  @Version('1')
+  @Delete()
+  async disable(@Body() payload: Workhour) {
+    try {
+      const workhours = this.service.getAll();
+      const exists = workhours.find(
+        (item) => item.hour === payload.hour && item.time === payload.time,
+      );
+      if (!exists)
+        throw new NotFoundException('No se ha encontrado ese horario');
+
+      return await this.service.disable(payload.id);
     } catch (e) {
       console.error(e);
       if (e) throw e;
