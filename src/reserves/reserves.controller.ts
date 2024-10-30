@@ -19,6 +19,7 @@ import { PaymentsService } from 'src/payments/payments.service';
 import { WhatsappService } from 'src/whatsapp/whatsapp.service';
 import { TWhatsAppTemplateMessage } from 'src/types/whatsapp.types';
 import { DateTime } from 'luxon';
+import { EPaymentStatusMessage } from 'src/types/payments.types';
 // import { WorkhoursService } from 'src/workhours/workhours.service';
 
 @Controller('reserves')
@@ -87,6 +88,7 @@ export class ReservesController {
           time: datetime.toLocaleString(DateTime.TIME_24_SIMPLE) + 'hs',
           number: RESERVE_NUMBER,
         },
+        template: 'reserve_created',
       };
 
       const whatsappResponse = await this.whatsapp.sendTemplateMessage(message);
@@ -135,7 +137,26 @@ export class ReservesController {
   async updateStatusById(@Body() payload: Partial<Reserve>) {
     try {
       const { id, status } = payload;
-      return await this.service.handleStatus(id, status);
+      const updated = await this.service.handleStatus(id, status);
+
+      const RESERVE_NUMBER = updated.number.toString().padStart(6, '0');
+
+      const message: TWhatsAppTemplateMessage = {
+        to: updated.user_phone,
+        attributes: {
+          user_name: updated.user_name,
+          number: RESERVE_NUMBER,
+          payment_status: EPaymentStatusMessage[updated.payment_status],
+        },
+        template: 'reserve_completed',
+      };
+
+      const whatsappResponse = await this.whatsapp.sendTemplateMessage(message);
+
+      return {
+        ...updated,
+        whatsapp_message_status: whatsappResponse?.status ?? 400,
+      };
     } catch (e) {
       if (e) {
         console.error(e);

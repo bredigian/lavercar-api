@@ -20,17 +20,24 @@ export class WhatsappService {
       to: payload.to,
       type: 'template',
       template: {
-        name: 'reserve_created',
+        name: payload.template,
         language: { code: 'es_AR' },
         components: [
           {
             type: 'body',
-            parameters: [
-              { type: 'text', text: payload.attributes.user_name },
-              { type: 'text', text: payload.attributes.date },
-              { type: 'text', text: payload.attributes.time },
-              { type: 'text', text: payload.attributes.number },
-            ],
+            parameters:
+              payload.template === 'reserve_created'
+                ? [
+                    { type: 'text', text: payload.attributes.user_name },
+                    { type: 'text', text: payload.attributes.date },
+                    { type: 'text', text: payload.attributes.time },
+                    { type: 'text', text: payload.attributes.number },
+                  ]
+                : [
+                    { type: 'text', text: payload.attributes.user_name },
+                    { type: 'text', text: payload.attributes.number },
+                    { type: 'text', text: payload.attributes.payment_status },
+                  ],
           },
         ],
       },

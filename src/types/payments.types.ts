@@ -13,3 +13,8 @@ export type TPaymentWebhook = {
   action: string;
   type: string;
 };
+
+export enum EPaymentStatusMessage {
+  PENDING = '❕Pago pendiente',
+  APPROVED = '✅ Pago aprobado',
+}
