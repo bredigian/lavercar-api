@@ -5,11 +5,13 @@ import { PrismaService } from 'src/services/prisma.service';
 import { ReservesController } from './reserves.controller';
 import { ReservesService } from './reserves.service';
 import { WhatsappService } from 'src/whatsapp/whatsapp.service';
+import { WorkhoursService } from 'src/workhours/workhours.service';
 
 @Module({
   controllers: [ReservesController],
   providers: [
     ReservesService,
+    WorkhoursService,
     PaymentsService,
     MercadopagoService,
     WhatsappService,

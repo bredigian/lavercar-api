@@ -74,7 +74,7 @@ export class WorkhoursService {
     return groupedByWeekday.sort((a, b) => a.weekday - b.weekday);
   }
 
-  async isEnabled(payload: Workhour) {
+  async isEnabled(payload: Partial<Workhour>) {
     return this.prisma.workhour.findFirst({
       where: {
         hour: payload.hour,

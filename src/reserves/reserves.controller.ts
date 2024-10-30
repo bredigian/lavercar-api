@@ -20,14 +20,14 @@ import { WhatsappService } from 'src/whatsapp/whatsapp.service';
 import { TWhatsAppTemplateMessage } from 'src/types/whatsapp.types';
 import { DateTime } from 'luxon';
 import { EPaymentStatusMessage } from 'src/types/payments.types';
-// import { WorkhoursService } from 'src/workhours/workhours.service';
+import { WorkhoursService } from 'src/workhours/workhours.service';
 
 @Controller('reserves')
 export class ReservesController {
   constructor(
     private readonly service: ReservesService,
     private readonly paymentsService: PaymentsService,
-    // private readonly workhoursService: WorkhoursService,
+    private readonly workhoursService: WorkhoursService,
     private readonly whatsapp: WhatsappService,
   ) {}
 
@@ -60,18 +60,21 @@ export class ReservesController {
         .setLocale('es-AR')
         .setZone('America/Argentina/Buenos_Aires');
 
-      // const hour = datetime.hour;
-      // const time = datetime.minute;
-      // const weekday = datetime.weekday;
-      // const isEnabled = await this.workhoursService.isEnabled({
-      //   hour,
-      //   time,
-      //   weekday,
-      // });
-      // if (!isEnabled)
-      //   throw new NotFoundException(
-      //     'El horario deseado no se encuentra habilitado.',
-      //   );
+      const { hour, minute, weekday } = datetime;
+      const isEnabled = await this.workhoursService.isEnabled({
+        hour,
+        time: minute,
+        weekday,
+      });
+      if (!isEnabled)
+        throw new NotFoundException('El horario no se encuentra habilitado.');
+
+      const now = DateTime.now();
+
+      if (datetime.toMillis() < now.toMillis())
+        throw new ConflictException(
+          'No es posible reservar un turno que ya pasó.',
+        );
 
       const isReserved = await this.service.isReserved(date);
       if (isReserved) throw new ConflictException('El turno ya fue asignado.');
