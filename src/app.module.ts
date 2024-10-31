@@ -9,6 +9,7 @@ import { WeekdaysModule } from './weekdays/weekdays.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { WorkhoursModule } from './workhours/workhours.module';
 import { SessionsModule } from './sessions/sessions.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SessionsModule } from './sessions/sessions.module';
     AuthModule,
     UserModule,
     SessionsModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],
