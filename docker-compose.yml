@@ -1,11 +1,11 @@
-version: '3.9'
+name: lavecar-app
 services:
   db:
     image: postgres:17
     container_name: lavecar-database
     ports:
-      - '8765:6543'
-      - '7654:5432'
+      - 8765:6543
+      - 7654:5432
     env_file:
       - .env
     volumes:
