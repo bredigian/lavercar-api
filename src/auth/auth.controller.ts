@@ -10,14 +10,16 @@ import {
   Post,
   ServiceUnavailableException,
   UnauthorizedException,
+  UsePipes,
+  ValidationPipe,
   Version,
 } from '@nestjs/common';
 
-import { TAuth } from 'src/types/auth.types';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SessionsService } from 'src/sessions/sessions.service';
 import { DateTime } from 'luxon';
+import { AuthDto } from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +31,8 @@ export class AuthController {
 
   @Version('1')
   @Post()
-  async signin(@Body() payload: TAuth) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async signin(@Body() payload: AuthDto) {
     try {
       const { username, password } = payload;
       const exists = await this.usersService.findByUsername(username);
@@ -83,6 +86,7 @@ export class AuthController {
 
   @Version('1')
   @Get('session')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async verifySession(@Headers('Authorization') authorization: string) {
     try {
       const access_token = authorization?.substring(7);
@@ -127,6 +131,7 @@ export class AuthController {
 
   @Version('1')
   @Delete('session')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async signout(@Headers('Authorization') authorization: string) {
     try {
       const access_token = authorization.substring(7);

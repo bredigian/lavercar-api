@@ -7,11 +7,13 @@ import {
   NotFoundException,
   Post,
   ServiceUnavailableException,
+  UsePipes,
+  ValidationPipe,
   Version,
 } from '@nestjs/common';
 
 import { WorkhoursService } from './workhours.service';
-import { Workhour } from '@prisma/client';
+import { EnableWorkhourDto } from './workhours.dto';
 
 @Controller('workhours')
 export class WorkhoursController {
@@ -25,7 +27,8 @@ export class WorkhoursController {
 
   @Version('1')
   @Post()
-  async enable(@Body() payload: Workhour) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async enable(@Body() payload: EnableWorkhourDto) {
     try {
       const workhours = this.service.getAll();
       const exists = workhours.find(
@@ -53,7 +56,8 @@ export class WorkhoursController {
 
   @Version('1')
   @Delete()
-  async disable(@Body() payload: Workhour) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async disable(@Body() payload: EnableWorkhourDto) {
     try {
       const workhours = this.service.getAll();
       const exists = workhours.find(

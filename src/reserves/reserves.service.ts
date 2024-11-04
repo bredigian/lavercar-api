@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { Reserve } from '@prisma/client';
+import { ReserveDto } from './reserves.dto';
 
 @Injectable()
 export class ReservesService {
@@ -29,7 +30,7 @@ export class ReservesService {
     });
   }
 
-  async create(payload: Reserve) {
+  async create(payload: ReserveDto) {
     return await this.prisma.reserve.create({ data: payload });
   }
 

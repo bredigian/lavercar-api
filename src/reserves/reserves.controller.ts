@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -8,19 +9,24 @@ import {
   Post,
   Query,
   ServiceUnavailableException,
+  UsePipes,
+  ValidationPipe,
   Version,
 } from '@nestjs/common';
 
-// import { DateTime } from 'luxon';
-
 import { ReservesService } from './reserves.service';
-import { Reserve } from '@prisma/client';
 import { PaymentsService } from 'src/payments/payments.service';
 import { WhatsappService } from 'src/whatsapp/whatsapp.service';
 import { TWhatsAppTemplateMessage } from 'src/types/whatsapp.types';
 import { DateTime } from 'luxon';
 import { EPaymentStatusMessage } from 'src/types/payments.types';
 import { WorkhoursService } from 'src/workhours/workhours.service';
+import {
+  ReserveByDateDto,
+  ReserveDetailDto,
+  ReserveDto,
+  UpdateReserveDto,
+} from './reserves.dto';
 
 @Controller('reserves')
 export class ReservesController {
@@ -33,7 +39,8 @@ export class ReservesController {
 
   @Version('1')
   @Get()
-  async getReserves(@Query() query: { date: Date }) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async getReserves(@Query() query: ReserveByDateDto) {
     try {
       const { date } = query;
       if (!date) return await this.service.getAllFromNow();
@@ -53,7 +60,8 @@ export class ReservesController {
 
   @Version('1')
   @Post()
-  async create(@Body() payload: Reserve) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async create(@Body() payload: ReserveDto) {
     try {
       const { date } = payload;
       const datetime = DateTime.fromJSDate(new Date(date))
@@ -114,11 +122,15 @@ export class ReservesController {
 
   @Version('1')
   @Get('detail')
-  async getDetail(
-    @Query() params: { id: Reserve['id']; number: Reserve['number'] },
-  ) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async getDetail(@Query() params: ReserveDetailDto) {
     try {
       const { id, number } = params;
+      if (!id && !number)
+        throw new BadRequestException(
+          'Se debe enviar el ID o el número de reserva.',
+        );
+
       const detail = await this.service.getDetail(id ?? Number(number));
       if (!detail) throw new NotFoundException('No se encontró la reserva.');
 
@@ -137,7 +149,8 @@ export class ReservesController {
 
   @Version('1')
   @Patch()
-  async updateStatusById(@Body() payload: Partial<Reserve>) {
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async updateStatusById(@Body() payload: UpdateReserveDto) {
     try {
       const { id, status } = payload;
       const updated = await this.service.handleStatus(id, status);

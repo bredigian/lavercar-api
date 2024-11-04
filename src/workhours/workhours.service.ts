@@ -1,3 +1,4 @@
+import { EnableWorkhourDto } from './workhours.dto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { Workhour } from '@prisma/client';
@@ -84,7 +85,7 @@ export class WorkhoursService {
     });
   }
 
-  async enable(payload: Workhour) {
+  async enable(payload: EnableWorkhourDto) {
     return this.prisma.workhour.create({ data: payload });
   }
 
