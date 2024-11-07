@@ -38,6 +38,7 @@ model Reserve {
   payment_status PAYMENT_STATUS
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
+  Income         Income[]
 }
 
 model Workhour {
@@ -69,4 +70,12 @@ model Session {
   created_at DateTime @default(now())
   expire_in  DateTime
   updated_at DateTime @updatedAt
+}
+
+model Income {
+  id         String   @id @unique @default(uuid())
+  date       DateTime @default(now())
+  value      Float
+  reserve_id String   @unique
+  reserve    Reserve  @relation(fields: [reserve_id], references: [id], onDelete: Cascade)
 }

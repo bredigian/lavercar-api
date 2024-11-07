@@ -5,20 +5,20 @@ import {
   Version,
 } from '@nestjs/common';
 
-import { FinancesService } from './finances.service';
+import { IncomesService } from './incomes.service';
 
-@Controller('finances')
-export class FinancesController {
-  constructor(private readonly service: FinancesService) {}
+@Controller('incomes')
+export class IncomesController {
+  constructor(private readonly service: IncomesService) {}
 
   @Get()
   @Version('1')
-  async getIncome() {
+  async getAll() {
     try {
-      return await this.service.getIncome();
+      return await this.service.getAll();
     } catch (e) {
       if (e) {
-        console.error(e);
+        console.error();
         throw e;
       }
 

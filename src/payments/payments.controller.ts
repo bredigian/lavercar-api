@@ -13,14 +13,16 @@ import {
 import { PaymentsService } from './payments.service';
 import { PreferenceRequest } from 'mercadopago/dist/clients/preference/commonTypes';
 import { TPaymentWebhook } from 'src/types/payments.types';
-import { PAYMENT_STATUS, Reserve } from '@prisma/client';
+import { Income, PAYMENT_STATUS, Reserve } from '@prisma/client';
 import { ReservesService } from 'src/reserves/reserves.service';
+import { IncomesService } from 'src/incomes/incomes.service';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(
     private readonly service: PaymentsService,
     private readonly reservesService: ReservesService,
+    private readonly incomesService: IncomesService,
   ) {}
 
   @Version('1')
@@ -63,11 +65,26 @@ export class PaymentsController {
   async updatePaymentStatusById(@Body() payload: Partial<Reserve>) {
     try {
       const { id, payment_status, payment_id } = payload;
-      return await this.reservesService.handlePaymentStatus(
+      const updated = await this.reservesService.handlePaymentStatus(
         id,
         payment_id,
         payment_status,
       );
+
+      const hasIncome = await this.incomesService.findByReserveId(updated.id);
+      if (updated.payment_status === 'PENDING' && hasIncome)
+        await this.incomesService.deleteByReserveId(updated.id);
+
+      if (!hasIncome && updated.payment_status === 'APPROVED') {
+        const INCOME_PAYLOAD: Partial<Income> = {
+          reserve_id: id,
+          value: 12500,
+        };
+
+        await this.incomesService.create(INCOME_PAYLOAD as Income);
+      }
+
+      return updated;
     } catch (e) {
       if (e) {
         console.error(e);
