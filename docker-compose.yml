@@ -10,14 +10,14 @@ services:
       - .env
     volumes:
       - lavecar-data:/var/lib/postgresql/data/
-  api:
-    depends_on:
-      - db
-    build: .
-    container_name: lavecar-backend
-    ports:
-      - 4041:3001
-    env_file:
-      - .env
+  # api:
+  #   depends_on:
+  #     - db
+  #   build: .
+  #   container_name: lavecar-backend
+  #   ports:
+  #     - 4041:3001
+  #   env_file:
+  #     - .env
 volumes:
   lavecar-data:

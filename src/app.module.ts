@@ -10,6 +10,7 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { WorkhoursModule } from './workhours/workhours.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { SeedModule } from './seed/seed.module';
+import { FinancesModule } from './finances/finances.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SeedModule } from './seed/seed.module';
     UserModule,
     SessionsModule,
     SeedModule,
+    FinancesModule,
   ],
   controllers: [],
   providers: [],
