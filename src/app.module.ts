@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { WeekdaysModule } from './weekdays/weekdays.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { WorkhoursModule } from './workhours/workhours.module';
+import { WashesModule } from './washes/washes.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { WorkhoursModule } from './workhours/workhours.module';
     SessionsModule,
     SeedModule,
     IncomesModule,
+    WashesModule,
   ],
   controllers: [],
   providers: [],

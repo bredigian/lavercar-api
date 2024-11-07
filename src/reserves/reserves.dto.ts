@@ -8,7 +8,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { RESERVE_STATUS, Reserve } from '@prisma/client';
+import { RESERVE_STATUS, Reserve, WashingType } from '@prisma/client';
 
 export class ReserveByDateDto {
   @IsDateString({}, { message: 'La fecha no es válida.' })
@@ -36,6 +36,9 @@ export class ReserveDto {
 
   @IsString()
   payment_status: 'PENDING';
+
+  @IsUUID()
+  washing_id: WashingType['id'];
 }
 
 export class ReserveDetailDto {

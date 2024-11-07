@@ -39,6 +39,8 @@ model Reserve {
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
   Income         Income[]
+  washing_id     String
+  WashingType    WashingType    @relation(fields: [washing_id], references: [id])
 }
 
 model Workhour {
@@ -78,4 +80,12 @@ model Income {
   value      Float
   reserve_id String   @unique
   reserve    Reserve  @relation(fields: [reserve_id], references: [id], onDelete: Cascade)
+}
+
+model WashingType {
+  id          String    @id @unique @default(uuid())
+  name        String
+  description String?
+  price       Float
+  Reserve     Reserve[]
 }
