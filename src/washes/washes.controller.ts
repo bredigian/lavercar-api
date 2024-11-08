@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   ServiceUnavailableException,
@@ -11,6 +12,7 @@ import {
 
 import { WashesService } from './washes.service';
 import { WashingDto } from './washes.dto';
+import { WashingType } from '@prisma/client';
 
 @Controller('washes')
 export class WashesController {
@@ -42,6 +44,23 @@ export class WashesController {
         ...payload,
         price: Number(payload.price),
       });
+    } catch (e) {
+      if (e) {
+        console.error(e);
+        throw e;
+      }
+
+      throw new ServiceUnavailableException(
+        'El servicio no se encuentra disponible.',
+      );
+    }
+  }
+
+  @Delete()
+  @Version('1')
+  async deleteById(@Body() payload: { id: WashingType['id'] }) {
+    try {
+      return await this.service.deleteById(payload.id);
     } catch (e) {
       if (e) {
         console.error(e);
