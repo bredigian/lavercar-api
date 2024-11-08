@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsEmail,
   IsEnum,
+  IsNumber,
   IsNumberString,
   IsOptional,
   IsPhoneNumber,
@@ -39,6 +40,9 @@ export class ReserveDto {
 
   @IsUUID()
   washing_id: WashingType['id'];
+
+  @IsNumber()
+  price: number;
 }
 
 export class ReserveDetailDto {

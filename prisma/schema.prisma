@@ -39,8 +39,9 @@ model Reserve {
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
   Income         Income[]
-  washing_id     String
-  WashingType    WashingType    @relation(fields: [washing_id], references: [id])
+  price          Float
+  washing_id     String?
+  WashingType    WashingType?   @relation(fields: [washing_id], references: [id], onDelete: SetNull)
 }
 
 model Workhour {

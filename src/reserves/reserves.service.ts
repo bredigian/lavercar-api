@@ -40,7 +40,10 @@ export class ReservesService {
 
   async getDetail(id: Reserve['id'] | Reserve['number']) {
     if (typeof id === 'string')
-      return await this.prisma.reserve.findUnique({ where: { id } });
+      return await this.prisma.reserve.findUnique({
+        where: { id },
+        include: { WashingType: true },
+      });
 
     return await this.prisma.reserve.findFirst({
       where: { number: id as number },
