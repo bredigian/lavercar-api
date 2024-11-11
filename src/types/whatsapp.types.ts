@@ -1,14 +1,14 @@
 import { EPaymentStatusMessage } from './payments.types';
 import { Reserve } from '@prisma/client';
 
-type TWhatsAppTemplate =
+export type TWhatsAppTemplate =
   | 'reserve_created'
   | 'reserve_completed'
   | 'cancel_reserve'
   | 'reserve_not_found'
   | 'method_not_allowed';
 
-type TWhatsAppTemplateMessageAttributes = {
+export type TWhatsAppTemplateMessageAttributes = {
   user_name: Reserve['user_name'];
   date?: string;
   time?: string;
@@ -43,7 +43,7 @@ export type TWhatsAppData = {
   };
 };
 
-type TWhatsAppWebhookEntryValue = {
+export type TWhatsAppWebhookEntryValue = {
   messaging_product: 'whatsapp';
   metadata: {
     display_phone_number: string;
@@ -63,12 +63,12 @@ type TWhatsAppWebhookEntryValue = {
   statuses?: any[];
 };
 
-type TWhatsAppWebhookEntryChanges = {
+export type TWhatsAppWebhookEntryChanges = {
   value: TWhatsAppWebhookEntryValue;
   field: 'messages';
 };
 
-type TWhatsAppWebhookEntry = {
+export type TWhatsAppWebhookEntry = {
   id: string;
   changes: TWhatsAppWebhookEntryChanges[];
 };

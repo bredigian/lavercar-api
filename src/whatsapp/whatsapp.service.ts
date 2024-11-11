@@ -1,6 +1,8 @@
 import {
   TWhatsAppData,
   TWhatsAppTemplateMessage,
+  TWhatsAppWebhookBody,
+  TWhatsAppWebhookEntryValue,
 } from 'src/types/whatsapp.types';
 import axios, { AxiosRequestConfig } from 'axios';
 
@@ -65,5 +67,17 @@ export class WhatsappService {
     } catch (e) {
       console.error('Ocurrió un error al enviar el mensaje por WhatsApp:', e);
     }
+  }
+
+  getChange(body: TWhatsAppWebhookBody) {
+    return body?.entry[0]?.changes[0]?.value;
+  }
+
+  getMessage(change: TWhatsAppWebhookEntryValue) {
+    return change.messages?.[0]?.text?.body?.toLowerCase();
+  }
+
+  getUserPhone(change: TWhatsAppWebhookEntryValue) {
+    return change.contacts?.[0]?.wa_id;
   }
 }
