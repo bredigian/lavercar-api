@@ -33,11 +33,21 @@ export class WhatsappService {
                     { type: 'text', text: payload.attributes.time },
                     { type: 'text', text: payload.attributes.number },
                   ]
-                : [
-                    { type: 'text', text: payload.attributes.user_name },
-                    { type: 'text', text: payload.attributes.number },
-                    { type: 'text', text: payload.attributes.payment_status },
-                  ],
+                : payload.template === 'cancel_reserve'
+                  ? [
+                      { type: 'text', text: payload.attributes.user_name },
+                      { type: 'text', text: payload.attributes.number },
+                    ]
+                  : payload.template === 'reserve_completed'
+                    ? [
+                        { type: 'text', text: payload.attributes.user_name },
+                        { type: 'text', text: payload.attributes.number },
+                        {
+                          type: 'text',
+                          text: payload.attributes.payment_status,
+                        },
+                      ]
+                    : [],
           },
         ],
       },

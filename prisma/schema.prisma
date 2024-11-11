@@ -28,7 +28,7 @@ enum PAYMENT_STATUS {
 
 model Reserve {
   id             String         @id @unique @default(uuid())
-  number         Int            @default(autoincrement())
+  number         Int            @unique @default(autoincrement())
   date           DateTime       @unique
   user_name      String
   user_email     String?

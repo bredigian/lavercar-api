@@ -47,6 +47,7 @@ export class ReservesService {
 
     return await this.prisma.reserve.findFirst({
       where: { number: id as number },
+      include: { WashingType: true },
     });
   }
 
@@ -65,6 +66,15 @@ export class ReservesService {
     return await this.prisma.reserve.update({
       where: { id },
       data: { status },
+    });
+  }
+
+  async cancelByNumber(
+    number: Reserve['number'],
+    user_phone: Reserve['user_phone'],
+  ) {
+    return await this.prisma.reserve.deleteMany({
+      where: { number, user_phone },
     });
   }
 }
